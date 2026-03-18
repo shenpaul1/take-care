@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>照顧者心靈雞湯</title>
+    <style>
+        body { font-family: 'Microsoft JhengHei', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background-color: #fdf5e6; }
+        .container { text-align: center; padding: 20px; background: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 80%; max-width: 400px; }
+        h1 { color: #d2691e; font-size: 1.5rem; }
+        #quote { font-size: 1.2rem; color: #5d4037; margin: 20px 0; min-height: 3em; line-height: 1.6; }
+        button { background-color: #d2691e; color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer; font-size: 1rem; }
+        button:active { transform: scale(0.95); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>💡 給辛苦的你</h1>
+    <div id="quote">點擊下方按鈕，抽一張心靈雞湯</div>
+    <button onclick="getNewQuote()">再抽一張</button>
+</div>
+
+<script>
+    const quotes = [
+        "你已經做得夠好了，休息一下也沒關係。",
+        "照顧別人的同時，也請別忘了照顧那個辛苦的自己。",
+        "今天的疲累，是為了換取一份溫柔的陪伴。",
+        "你的愛，是病榻前最溫暖的陽光。",
+        "不需要追求完美，你的存在本身就是一種安慰。",
+        "累的時候，深呼吸三次，世界會稍微安靜下來。"
+    ];
+
+    function getNewQuote() {
+        const randomIndex = Math.floor(Math.random() * quotes.length);
+        document.getElementById('quote').innerText = quotes[randomIndex];
+    }
+    
+    // 網頁開啟時自動跑一次
+    window.onload = getNewQuote;
+</script>
+
+</body>
+</html>
