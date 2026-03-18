@@ -3,161 +3,237 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>照顧者心靈雞湯 - 薰衣草之約</title>
+    <title>照顧者心靈雞湯 - 薰衣草影音站</title>
     <style>
-        /* 薰衣草主題樣式 */
         :root {
-            --bg-color: #F3E5F5; /* 極淺薰衣草 */
-            --primary-purple: #9575CD; /* 中調紫 */
-            --dark-purple: #5E35B1; /* 深紫文字 */
-            --accent-purple: #D1C4E9;
+            --bg-color: #F3E5F5;
+            --primary-purple: #9575CD;
+            --dark-purple: #5E35B1;
+            --glass-bg: rgba(255, 255, 255, 0.75);
         }
 
-        body {
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
             font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
-            background: linear-gradient(135deg, #F3E5F5 0%, #E1BEE7 100%);
+            overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-            color: var(--dark-purple);
+            background: linear-gradient(135deg, #F3E5F5 0%, #E1BEE7 100%);
         }
 
+        /* 影片背景容器 */
+        .video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 1s ease;
+            pointer-events: none;
+        }
+
+        .video-background.active {
+            opacity: 0.6; /* 影片透明度，避免干擾閱讀 */
+        }
+
+        iframe {
+            width: 100vw;
+            height: 56.25vw; /* 16:9 比例 */
+            min-height: 100vh;
+            min-width: 177.77vh;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* 控制按鈕區 */
+        .controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 100;
+        }
+
+        .ctrl-btn {
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid white;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+        .ctrl-btn:hover { transform: scale(1.1); background: white; }
+
+        /* 卡片主體 */
         .card {
-            background: rgba(255, 255, 255, 0.9);
-            padding: 45px 30px;
-            border-radius: 30px;
+            background: var(--glass-bg);
+            padding: 40px 25px;
+            border-radius: 35px;
             box-shadow: 0 15px 35px rgba(103, 58, 183, 0.15);
             text-align: center;
-            max-width: 420px;
-            width: 100%;
+            max-width: 380px;
+            width: 85%;
             border: 2px solid white;
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(12px); /* 磨砂玻璃效果 */
+            z-index: 10;
         }
 
-        .icon {
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-            display: block;
-        }
-
-        h1 {
-            font-size: 1.3rem;
-            color: var(--dark-purple);
-            margin-bottom: 30px;
-            letter-spacing: 1.5px;
-            font-weight: 600;
-        }
+        .icon { font-size: 2.5rem; margin-bottom: 15px; display: block; }
+        h1 { font-size: 1.2rem; color: var(--dark-purple); margin-bottom: 25px; letter-spacing: 1px; }
 
         #quote-container {
             min-height: 140px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
 
         #quote {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             line-height: 1.8;
             font-weight: 500;
             color: #4527A0;
-            opacity: 1;
-            transition: opacity 0.6s ease; /* 淡入淡出核心 */
+            transition: opacity 0.6s ease;
         }
 
-        button {
+        .main-btn {
             background-color: var(--primary-purple);
             color: white;
             border: none;
-            padding: 16px 40px;
+            padding: 15px 30px;
             border-radius: 50px;
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             cursor: pointer;
-            box-shadow: 0 6px 15px rgba(149, 117, 205, 0.4);
-            transition: all 0.3s ease;
+            box-shadow: 0 6px 15px rgba(149, 117, 205, 0.3);
             width: 90%;
-            letter-spacing: 1px;
+            transition: 0.3s;
         }
+        .main-btn:active { transform: scale(0.95); }
 
-        button:hover {
-            background-color: var(--dark-purple);
-            transform: translateY(-2px);
-        }
-
-        button:active {
-            transform: translateY(0);
-        }
-
-        footer {
-            margin-top: 30px;
-            font-size: 0.8rem;
-            color: #7E57C2;
-            opacity: 0.7;
-        }
+        footer { margin-top: 30px; font-size: 0.7rem; color: #7E57C2; opacity: 0.7; }
     </style>
 </head>
 <body>
+
+<div class="video-background" id="videoLayer">
+    <iframe id="ytPlayer" 
+        src="https://www.youtube.com/embed/Z0p9Oon_S8E?autoplay=1&mute=1&loop=1&playlist=Z0p9Oon_S8E&controls=0&showinfo=0&rel=0&iv_load_policy=3" 
+        frameborder="0" allow="autoplay; encrypted-media">
+    </iframe>
+</div>
+
+<audio id="bgm" loop>
+    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+</audio>
+
+<div class="controls">
+    <button class="ctrl-btn" onclick="toggleVideo()" title="切換影片模式">🎬</button>
+    <button class="ctrl-btn" id="music-btn" onclick="toggleMusic()">🔇</button>
+</div>
 
 <div class="card">
     <span class="icon">🪻</span>
     <h1>親愛的，請給自己一點空間</h1>
     
     <div id="quote-container">
-        <div id="quote">正在為你泡一碗心靈雞湯...</div>
+        <div id="quote">正在為你準備溫暖...</div>
     </div>
 
-    <button onclick="getNewQuote()">抽取下一份溫暖</button>
+    <button class="main-btn" onclick="getNewQuote()">換一句暖心語錄</button>
 
-    <footer>薰衣草小站 ‧ 陪你深呼吸</footer>
+    <footer>薰衣草影音站 ‧ 您的靜心角落</footer>
 </div>
 
 <script>
-    // 500 句語錄資料庫 (已分類整合)
-    const quotes = [
-        // --- 接納與允許 ---
-        "你可以累，這完全沒有問題。", "不完美也沒關係，你已經盡力了。", "今天沒做完的事，就留給明天吧。", "你是照顧者，也是需要被呵護的孩子。", "哭出來也沒關係，眼淚能洗滌壓力。", 
-        "你不需要背負所有人的情緒。", "拒絕不合理的請求，是在保護你的能量。", "你的價值，不取決於你做了多少事。", "允許自己有負面情緒，那是真實的你。", "累了就睡一會，夢裡沒有壓力和責任。",
-        // --- 呼吸與空間 ---
-        "現在，請跟我一起深呼吸：吸氣，吐氣。", "閉上眼，讓肩膀放鬆三秒鐘。", "這分鐘，你只需要照顧你的呼吸。", "感覺腳掌踩在地板上的踏實感。", "把手放在心口，感受自己的心跳。", 
-        "壓力像雲，會飄過，不會永遠停留。", "現在的你，是安全的，放鬆下來。", "吐氣時，想像把所有的緊繃都吐出去。", "試著放空大腦，只聽周圍的聲音。", "你不需要現在就解決所有問題。",
-        // --- 自我肯定 ---
-        "你現在所做的一切，是這世界上最溫柔的承擔。", "你的陪伴，就是最良效的藥方。", "不一定要做到完美，你的用心就是最好的照顧。", "因為有你，這段路才不顯得那麼孤單。", "你是一個充滿愛與力量的人。",
-        // --- 幽默與轉念 ---
-        "今天的脂肪也辛苦了，它們幫你吸收了好多壓力。", "如果不開心，就去吃點甜的，讓生活變甜一點。", "天塌下來當棉被蓋，我們先睡一覺再說。", "你不是超人，你是偽裝成凡人的天使，累了正常。", "今天的挑戰已過期，請領取明天的勇氣。",
-        // --- 補充至 500 句的邏輯 (以下為示範，實際應用時可無限增加) ---
-        "你比你想像中更強大，也比你以為的更柔軟。", "給自己一個長長的吻，或者一個大大的擁抱。", "陽光照在每個人身上，也包括辛苦的你。", "不要為了昨天的錯誤，懲罰今天的自己。", "每一朵花都有自己的花期，你也一樣。",
-        "照顧好自己的情緒，是最高級的自律。", "在忙碌中，別忘了那個愛笑的自己。", "心靈的平靜，是這世界上最昂貴的奢侈品。", "你是你生命的主角，請記得愛自己。", "聽，心跳的聲音在說：謝謝你照顧我。",
-        "世界很大，但你的心可以很安靜。", "放下手機，看一眼窗外的綠色。", "熱水澡能洗去灰塵，也能洗去疲憊。", "你不需要做得更好，你現在就很好。", "愛，是從照顧自己開始的。",
-        "每一滴汗水，都是守護家人的珍珠。", "你的溫柔，是黑暗中最穩定的光。", "給靈魂一個深呼吸的機會。", "不要讓別人的期待，壓垮了你的光芒。", "今天，你最重要。"
-        // (註：為節省篇幅，此處列出核心架構。您可以將之前的200句全數補入此陣列，並按此節奏複製擴充)
+    // 1. 影片控制
+    let isVideoActive = false;
+    function toggleVideo() {
+        const videoLayer = document.getElementById('videoLayer');
+        isVideoActive = !isVideoActive;
+        videoLayer.classList.toggle('active', isVideoActive);
+    }
+
+    // 2. 音樂控制
+    const bgm = document.getElementById('bgm');
+    const musicBtn = document.getElementById('music-btn');
+    let isPlaying = false;
+
+    function toggleMusic() {
+        if (isPlaying) { bgm.pause(); musicBtn.innerText = "🔇"; } 
+        else { bgm.play(); musicBtn.innerText = "🔊"; }
+        isPlaying = !isPlaying;
+    }
+
+    // 3. 500 句語錄邏輯
+    const coreQuotes = [
+        "你現在所做的一切，是這世界上最溫柔的承擔。", "你的陪伴，就是最良效的藥方。", 
+        "不一定要做到完美，你的用心就是最好的照顧。", "壓力像雲，會飄過，不會永遠停留。",
+        "照顧好自己，你才有力量照顧別人。", "今天的挑戰已過期，請領取明天的勇氣。",
+        "累了就停下來喘口氣，世界不會因為你休息而崩塌。", "你的疲累，值得被溫柔地看見。",
+        "現在，請跟我一起深呼吸：吸氣，吐氣。", "放鬆眉心，那裡不需要鎖得那麼緊。"
+        
+        // --- 類別二：情緒接納與減壓 ---
+        "累了就停下來喘口氣，世界不會因為你休息而崩塌。",
+        "有情緒是正常的，照顧者也需要被照顧。",
+        "流淚並不代表軟弱，而是心靈正在排毒。",
+        "給自己一個擁抱，告訴自己：『辛苦了，謝謝你。』",
+        "不需要隨時都保持堅強，偶爾示弱也沒關係。",
+        "放下對完美的執著，那是對自己最大的慈悲。",
+
+    // --- 類別三：生活的小確幸 ---
+    "喝口水，深呼吸，感受空氣進入肺部的平靜。",
+    "看窗外的一朵雲，讓心跟著它飄一會兒。",
+    "這分鐘，請只留給你自己。",
+    "聽一首喜歡的歌，讓旋律帶走你的疲憊。",
+    "陽光依舊會升起，你並不孤單。",
+
+    // --- 類別四：長跑的智慧 ---
+    "照顧是一場馬拉松，配速比衝刺更重要。",
+    "先把自己的杯子裝滿，才有餘裕分享給別人。",
+    "拒絕不合理的要求，是為了走更長遠的路。",
+    "尋求幫助不是失敗，而是智慧的展現。",
+    "小小的進步也是進步，值得為此慶祝。",
+    
+    // --- 類別五：對未來的期許 ---
+    "這段艱難的時光，終將成為你生命中堅韌的勳章。",
+    "所有的付出，都會以另一種形式回到你身邊。",
+    "願你心中始終有一盞燈，照亮自己，也溫暖他人。",
+    "過好今天，就是對未來最好的交代。"
+        
+        // ... (這裡可以繼續放入剩下的 490 句)
     ];
 
-    // 擴充機制：如果想快速增加到500句，可以將相似語法進行變化
-    //const fillers = ["休息是為了走更長的路。", "深呼吸，一切都會好起來。", "你是最棒的照顧者。", "別忘了給自己一個微笑。"];
-    while(quotes.length < 500) {
-        quotes.push(...fillers); // 這裡可以填入更多語句直到補滿 500
+    // 自動擴充示範
+    while (coreQuotes.length < 500) {
+        coreQuotes.push("深呼吸，感受當下的平靜。你是最勇敢的守護者。");
     }
 
     function getNewQuote() {
         const quoteElement = document.getElementById('quote');
-        
-        // 1. 先淡出
         quoteElement.style.opacity = 0;
-        
-        // 2. 在看不見的時候換文字
         setTimeout(() => {
-            const randomIndex = Math.floor(Math.random() * quotes.length);
-            quoteElement.innerText = quotes[randomIndex];
-            
-            // 3. 再淡入
+            const randomIndex = Math.floor(Math.random() * coreQuotes.length);
+            quoteElement.innerText = coreQuotes[randomIndex];
             quoteElement.style.opacity = 1;
-        }, 600); // 延遲時間需與 CSS transition 配合
+        }, 600);
     }
 
-    // 網頁載入時自動顯示一句
     window.onload = getNewQuote;
 </script>
 
