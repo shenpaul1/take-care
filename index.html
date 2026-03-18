@@ -3,101 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>照顧者心靈雞湯 - 薰衣草影音站</title>
+    <title>照顧者心靈雞湯 - 薰衣草之聲</title>
     <style>
         :root {
             --bg-color: #F3E5F5;
             --primary-purple: #9575CD;
             --dark-purple: #5E35B1;
-            --glass-bg: rgba(255, 255, 255, 0.75);
+            --accent-purple: #D1C4E9;
         }
 
-        body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
+        body {
             font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
-            overflow: hidden;
+            background: linear-gradient(135deg, #F3E5F5 0%, #E1BEE7 100%);
             display: flex;
             justify-content: center;
             align-items: center;
-            background: linear-gradient(135deg, #F3E5F5 0%, #E1BEE7 100%);
-        }
-
-        /* 影片背景容器 */
-        .video-background {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            opacity: 0;
-            transition: opacity 1s ease;
-            pointer-events: none;
-        }
-
-        .video-background.active {
-            opacity: 0.6; /* 影片透明度，避免干擾閱讀 */
-        }
-
-        iframe {
-            width: 100vw;
-            height: 56.25vw; /* 16:9 比例 */
             min-height: 100vh;
-            min-width: 177.77vh;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            margin: 0;
+            padding: 20px;
+            color: var(--dark-purple);
+            overflow: hidden;
         }
 
-        /* 控制按鈕區 */
-        .controls {
+        /* 音樂切換按鈕 */
+        #music-btn {
             position: fixed;
             top: 20px;
             right: 20px;
-            display: flex;
-            gap: 10px;
-            z-index: 100;
-        }
-
-        .ctrl-btn {
-            background: rgba(255, 255, 255, 0.7);
+            background: rgba(255, 255, 255, 0.6);
             border: 1px solid white;
-            width: 45px;
-            height: 45px;
+            padding: 10px;
             border-radius: 50%;
             cursor: pointer;
             font-size: 1.2rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            z-index: 100;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
             transition: all 0.3s;
         }
-        .ctrl-btn:hover { transform: scale(1.1); background: white; }
+        #music-btn:hover { transform: scale(1.1); background: white; }
 
-        /* 卡片主體 */
         .card {
-            background: var(--glass-bg);
+            background: rgba(255, 255, 255, 0.85);
             padding: 40px 25px;
-            border-radius: 35px;
+            border-radius: 30px;
             box-shadow: 0 15px 35px rgba(103, 58, 183, 0.15);
             text-align: center;
             max-width: 380px;
-            width: 85%;
+            width: 100%;
             border: 2px solid white;
-            backdrop-filter: blur(12px); /* 磨砂玻璃效果 */
-            z-index: 10;
+            backdrop-filter: blur(8px);
+            position: relative;
         }
 
         .icon { font-size: 2.5rem; margin-bottom: 15px; display: block; }
-        h1 { font-size: 1.2rem; color: var(--dark-purple); margin-bottom: 25px; letter-spacing: 1px; }
+        h1 { font-size: 1.25rem; color: var(--dark-purple); margin-bottom: 25px; letter-spacing: 1.5px; }
 
         #quote-container {
-            min-height: 140px;
+            min-height: 150px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -105,14 +67,14 @@
         }
 
         #quote {
-            font-size: 1.1rem;
+            font-size: 1.15rem;
             line-height: 1.8;
             font-weight: 500;
             color: #4527A0;
             transition: opacity 0.6s ease;
         }
 
-        .main-btn {
+        button.main-btn {
             background-color: var(--primary-purple);
             color: white;
             border: none;
@@ -120,32 +82,23 @@
             border-radius: 50px;
             font-size: 1.05rem;
             cursor: pointer;
-            box-shadow: 0 6px 15px rgba(149, 117, 205, 0.3);
-            width: 90%;
-            transition: 0.3s;
+            box-shadow: 0 6px 15px rgba(149, 117, 205, 0.4);
+            transition: all 0.3s ease;
+            width: 85%;
         }
-        .main-btn:active { transform: scale(0.95); }
 
-        footer { margin-top: 30px; font-size: 0.7rem; color: #7E57C2; opacity: 0.7; }
+        button.main-btn:hover { background-color: var(--dark-purple); }
+
+        footer { margin-top: 30px; font-size: 0.75rem; color: #7E57C2; opacity: 0.6; }
     </style>
 </head>
 <body>
 
-<div class="video-background" id="videoLayer">
-    <iframe id="ytPlayer" 
-        src="https://www.youtube.com/embed/Z0p9Oon_S8E?autoplay=1&mute=1&loop=1&playlist=Z0p9Oon_S8E&controls=0&showinfo=0&rel=0&iv_load_policy=3" 
-        frameborder="0" allow="autoplay; encrypted-media">
-    </iframe>
-</div>
-
 <audio id="bgm" loop>
-    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+    <source src="bgm.mp3" type="audio/mpeg">
 </audio>
 
-<div class="controls">
-    <button class="ctrl-btn" onclick="toggleVideo()" title="切換影片模式">🎬</button>
-    <button class="ctrl-btn" id="music-btn" onclick="toggleMusic()">🔇</button>
-</div>
+<button id="music-btn" onclick="toggleMusic()">🔇</button>
 
 <div class="card">
     <span class="icon">🪻</span>
@@ -155,81 +108,83 @@
         <div id="quote">正在為你準備溫暖...</div>
     </div>
 
-    <button class="main-btn" onclick="getNewQuote()">換一句暖心語錄</button>
+    <button class="main-btn" onclick="getNewQuote()">抽取下一份溫暖</button>
 
-    <footer>薰衣草影音站 ‧ 您的靜心角落</footer>
+    <footer>薰衣草小站 ‧ 陪你深呼吸</footer>
 </div>
 
 <script>
-    // 1. 影片控制
-    let isVideoActive = false;
-    function toggleVideo() {
-        const videoLayer = document.getElementById('videoLayer');
-        isVideoActive = !isVideoActive;
-        videoLayer.classList.toggle('active', isVideoActive);
-    }
-
-    // 2. 音樂控制
+    // 音樂控制
     const bgm = document.getElementById('bgm');
     const musicBtn = document.getElementById('music-btn');
     let isPlaying = false;
 
     function toggleMusic() {
-        if (isPlaying) { bgm.pause(); musicBtn.innerText = "🔇"; } 
-        else { bgm.play(); musicBtn.innerText = "🔊"; }
+        if (isPlaying) {
+            bgm.pause();
+            musicBtn.innerText = "🔇";
+        } else {
+            bgm.play();
+            musicBtn.innerText = "🔊";
+        }
         isPlaying = !isPlaying;
     }
 
-    // 3. 500 句語錄邏輯
-    const coreQuotes = [
-        "你現在所做的一切，是這世界上最溫柔的承擔。", "你的陪伴，就是最良效的藥方。", 
-        "不一定要做到完美，你的用心就是最好的照顧。", "壓力像雲，會飄過，不會永遠停留。",
-        "照顧好自己，你才有力量照顧別人。", "今天的挑戰已過期，請領取明天的勇氣。",
-        "累了就停下來喘口氣，世界不會因為你休息而崩塌。", "你的疲累，值得被溫柔地看見。",
-        "現在，請跟我一起深呼吸：吸氣，吐氣。", "放鬆眉心，那裡不需要鎖得那麼緊。"
+    // 語錄資料庫 (預留 500 句位置)
+    let quotes = [
+        "你現在所做的一切，是這世界上最溫柔的承擔。", "你的陪伴，就是最良效的藥方。", "不一定要做到完美，你的用心就是最好的照顧。", 
+        "因為有你，這段路才不顯得那麼孤單。", "你可以累，這完全沒有問題。", "不完美也沒關係，你已經盡力了。",
+        "今天沒做完的事，就留給明天吧。", "你是照顧者，也是需要被呵護的孩子。", "哭出來也沒關係，眼淚能洗滌壓力。",
+        "現在，請跟我一起深呼吸：吸氣，吐氣。", "閉上眼，讓肩膀放鬆三秒鐘。", "把手放在心口，感受自己的心跳。",
+        "每一口呼吸，都是在為自己充電。", "今天的挑戰已過期，請領取明天的勇氣。", "你是光，即便在陰影中也依然閃耀。"
+        // ... 此處可持續貼入您之前的語錄
         
-        // --- 類別二：情緒接納與減壓 ---
-        "累了就停下來喘口氣，世界不會因為你休息而崩塌。",
-        "有情緒是正常的，照顧者也需要被照顧。",
-        "流淚並不代表軟弱，而是心靈正在排毒。",
-        "給自己一個擁抱，告訴自己：『辛苦了，謝謝你。』",
-        "不需要隨時都保持堅強，偶爾示弱也沒關係。",
-        "放下對完美的執著，那是對自己最大的慈悲。",
+        // --- 呼吸與當下 (1-40) ---
+    "現在，請跟我一起深呼吸：吸氣，吐氣。", "閉上眼，讓肩膀放鬆三秒鐘。", "這分鐘，你只需要照顧你的呼吸。", "感覺腳掌踩在地板上的踏實感。", "把手放在心口，感受自己的心跳。", "壓力像雲，會飄過，不會永遠停留。", "現在的你，是安全的，放鬆下來。", "吐氣時，想像把所有的緊繃都吐出去。", "試著放空大腦，只聽周圍的聲音。", "你不需要現在就解決所有問題。",
+    "慢慢來，比較快。", "專注於當下這一刻，不要想明天。", "給自己一個長長的、安靜的深呼吸。", "現在，放下手機，閉眼休息一分鐘吧。", "你的身體需要你的溫柔對待。", "放鬆眉心，那裡不需要鎖得那麼緊。", "現在，你是自由的，心靈是自由的。", "想像一道暖光，從頭頂緩緩流向全身。", "讓思緒像溪水一樣流過，不要抓著它。", "不需要強求平靜，接受現在的焦躁也可以。",
+    "給辛苦的雙手一點按摩吧。", "暫時關掉腦中的廣播電台。", "每一口呼吸，都是在為自己充電。", "你做得很好了，真的。", "現在，試著微笑一下，肌肉會放鬆的。", "壓力是提醒你該抱抱自己了。", "喝一口溫水，感受它流過喉嚨的溫度。", "允許自己在這個瞬間，什麼都不做。", "你的疲累，值得被溫柔地看見。", "世界轉得很快，但你可以慢下來。",
+    "深呼吸，讓空氣填滿你的腹部。", "這分鐘，沒有人會要求你做什麼。", "把重擔暫時放在門外，進來休息吧。", "感受空氣的涼爽，感受身體的重量。", "你是活生生的人，不是運轉的機器。", "放鬆你的牙關，別咬得那麼緊。", "這一刻，你是被愛著與支持著的。", "讓肩膀自然下垂，卸下那無形的擔子。", "你是宇宙中獨一無二的奇蹟。", "安靜下來，聽聽內心的聲音。",
 
-    // --- 類別三：生活的小確幸 ---
-    "喝口水，深呼吸，感受空氣進入肺部的平靜。",
-    "看窗外的一朵雲，讓心跟著它飄一會兒。",
-    "這分鐘，請只留給你自己。",
-    "聽一首喜歡的歌，讓旋律帶走你的疲憊。",
-    "陽光依舊會升起，你並不孤單。",
+    // --- 許可與接納 (41-80) ---
+    "你可以累，這完全沒有問題。", "不完美也沒關係，你已經盡力了。", "今天沒做完的事，就留給明天吧。", "你是照顧者，也是需要被呵護的孩子。", "哭出來也沒關係，眼淚能洗滌壓力。", "你不需要背負所有人的情緒。", "拒絕不合理的請求，是在保護你的能量。", "你的價值，不取決於你做了多少事。", "允許自己有負面情緒，那是真實的你。", "累了就睡一會，夢裡沒有壓力和責任。",
+    "你不是超人，不需要無所不能。", "承認自己『沒辦法了』，也是一種勇氣。", "對自己說一聲：『辛苦了，真的。』", "你不需要隨時隨地都保持堅強。", "原諒那個偶爾會不耐煩的自己。", "照顧好自己，就是對家人最好的禮物。", "給自己一個不被打擾的『逃跑時間』。", "你可以對世界說不，對自己說好。", "你的疲憊是努力過的勳章。", "不要為沒做到的事感到愧疚。",
+    "你已經給出了你所能給出的全部。", "放下對結果的掌控，順其自然吧。", "你可以失望，可以生氣，可以軟弱。", "今天的你，值得一份美味的點心。", "給自己放個五分鐘的小假吧。", "不需要向任何人證明你有多努力。", "你的存在，就是對受照顧者最大的安慰。", "接受自己的極限，那不是失敗。", "放手一點點，世界不會塌下來。", "你是這場長跑中的英雄，請愛惜自己。",
+    "情緒就像天氣，陰天過後總會晴。", "不要用別人的標準來衡量你的付出。", "你值得擁有一個安靜的夜晚。", "今天的辛苦，會換來明日的韌性。", "你是這世界上最溫柔的存在之一。", "別忘了，你也是需要被溫柔對待的人。", "對自己寬容一點，就像你對別人那樣。", "深呼吸，告訴自己：『這一切都會過去。』", "你是你生命的主角，而不只是配角。", "把焦慮寫在紙上，然後撕掉它。",
 
-    // --- 類別四：長跑的智慧 ---
-    "照顧是一場馬拉松，配速比衝刺更重要。",
-    "先把自己的杯子裝滿，才有餘裕分享給別人。",
-    "拒絕不合理的要求，是為了走更長遠的路。",
-    "尋求幫助不是失敗，而是智慧的展現。",
-    "小小的進步也是進步，值得為此慶祝。",
-    
-    // --- 類別五：對未來的期許 ---
-    "這段艱難的時光，終將成為你生命中堅韌的勳章。",
-    "所有的付出，都會以另一種形式回到你身邊。",
-    "願你心中始終有一盞燈，照亮自己，也溫暖他人。",
-    "過好今天，就是對未來最好的交代。"
-        
-        // ... (這裡可以繼續放入剩下的 490 句)
+    // --- 正向轉念與鼓勵 (81-120) ---
+    "小小的進步，也值得為自己鼓掌。", "每一天的努力，都在種下希望的種子。", "你不是孤軍奮戰，宇宙在支持著你。", "即使在黑暗中，你依然是那盞微光。", "你的溫暖，照亮了別人的生命。", "生活雖然辛苦，但你依然散發光芒。", "相信自己的內在力量，你比想像中堅強。", "每一場考驗，都是心靈成長的養分。", "看，窗外的陽光依然在為你加油。", "你的善良，是這世界最美的風景。",
+    "保持希望，好事總在不經意間發生。", "你所做的一切，都有其深遠的意義。", "轉個念頭，壓力就能變成前進的動力。", "不要看還有多少路，看看你已走了多遠。", "你值得所有的美好與善意。", "你的付出，老天爺都看在眼裡。", "為今天的自己點個讚吧！", "心寬了，路也就寬了。", "你是自己最堅實的靠山。", "讓愛流動，也讓愛回到自己身上。",
+    "每一個低潮，都是為了下一次的躍升。", "你的忍耐與陪伴，是最高貴的品質。", "對未來保持一點點好奇與期待。", "只要心不累，路就不遠。", "做自己的啦啦隊長，為自己喝采。", "你所付出的愛，永遠不會消失。", "每天給自己一個微小的驚喜。", "心靈的平靜，才是真正的財富。", "你是光，即便在陰影中也依然閃耀。", "所有的困難，都是化了妝的祝福。",
+
+    // --- 簡單生活與小確幸 (121-160) ---
+    "去洗個熱水澡，沖走一身的疲憊。", "換一件舒服的衣服，抱抱柔軟的枕頭。", "聽一首節奏輕快的歌，隨之律動。", "看一張可愛的照片，讓嘴角上揚。", "這分鐘，只屬於你和這杯茶。", "去看看綠色的植物，讓眼睛放鬆。", "寫下一件今天讓你開心的微小事。", "聞一聞喜歡的味道，薰衣草或咖啡香。", "在陽光下站一會兒，感受能量的注入。", "買一朵花送給自己，你值得這份浪漫。",
+    "給自己五分鐘，什麼都不想地發呆。", "聽聽雨聲，讓大自然療癒你的心。", "伸個大懶腰，把骨頭拉開來。", "吃一顆甜甜的糖，讓心情也變甜。", "看看遠方，讓視野開闊一點。", "整理一下桌面，心情也會跟著清爽。", "給好久不見的朋友發個貼圖。", "翻一翻以前快樂的出遊照片。", "為自己點一盞溫暖的小燈。", "摸摸毛小孩，感受那純粹的愛。",
+    "聽聽白噪音，讓心靈沉靜下來。", "試著慢動作走路，感受身體的擺動。", "畫個小插圖，抒發壓抑的情緒。", "讀一段溫暖的文字，與靈魂對話。", "在筆記本上塗鴉，釋放潛意識。", "對鏡子裡的自己微笑，說聲嘿。", "換條路走回家，發現生活的小細節。", "去公園坐坐，聽聽鳥鳴聲。", "感受微風拂過臉頰的觸感。", "今晚提早十分鐘上床休息吧。",
+
+    // --- 靈魂對話與深層放鬆 (161-200) ---
+    "你的心靈是一座花園，需要你的灌溉。", "放下對未來的擔憂，過好這一刻。", "在忙碌中尋找那一抹寧靜的綠洲。", "你是宇宙的一部分，你並不孤單。", "所有的相遇，都是生命最好的安排。", "溫柔地對待你的靈魂，它辛苦了。", "在安靜中，找回最真實的自己。", "讓過去的過去，讓未來的未來。", "你是愛，你是光，你是無限的可能。", "相信生命自有它的出口。",
+    "不要強求每一件事都有答案。", "心若不動，風又奈何。", "在平凡的照顧中，看見不平凡的愛。", "你是這段生命旅程的引航者。", "感恩每一份細微的獲得。", "內心的平和，是抵抗外界最好的盾牌。", "你是強大的，因為你懂得溫柔。", "讓心靈回歸最初的純粹。", "這世界很大，你的煩惱很小。", "所有的等待，都是為了更好的重逢。",
+    "擁抱你的不完美，那是你的獨特性。", "你的慈悲，是治癒傷痛的良藥。", "在沉默中汲取力量。", "你是生命奇蹟的見證者。", "保持一顆赤子之心，看待世界。", "愛，是解決一切難題的終極答案。", "讓靈魂自由地呼吸吧。", "你是宇宙最珍貴的寶貝。", "心存感激，所見皆是溫暖。", "這一切的努力，最終都會圓滿。", "深呼吸，最後一次，為自己微笑。"        
     ];
 
-    // 自動擴充示範
-    while (coreQuotes.length < 500) {
-        coreQuotes.push("深呼吸，感受當下的平靜。你是最勇敢的守護者。");
+    // 自動填充到 500 句 (這是一個範例，確保陣列長度)
+    //const extraQuotes = ["深呼吸，感受當下的平靜。", "照顧好自己，你才有力量照顧別人。", "你是這段旅程中最勇敢的人。", "給自己一個微笑，你做得很棒。"];
+    while (quotes.length < 500) {
+        quotes.push(...extraQuotes);
     }
 
     function getNewQuote() {
         const quoteElement = document.getElementById('quote');
         quoteElement.style.opacity = 0;
+        
+        // 如果音樂還沒播，第一次點擊按鈕時順便啟動音樂 (使用者體驗優化)
+        if (!isPlaying) {
+            // toggleMusic(); // 如果想強制啟動可取消註解
+        }
+
         setTimeout(() => {
-            const randomIndex = Math.floor(Math.random() * coreQuotes.length);
-            quoteElement.innerText = coreQuotes[randomIndex];
+            const randomIndex = Math.floor(Math.random() * quotes.length);
+            quoteElement.innerText = quotes[randomIndex];
             quoteElement.style.opacity = 1;
         }, 600);
     }
